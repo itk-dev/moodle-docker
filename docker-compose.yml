@@ -1,4 +1,3 @@
-# itk-version: 3.2.1
 networks:
   frontend:
     external: true
@@ -29,6 +28,8 @@ services:
       - EXTRA_LOCALES=da_DK.UTF-8 UTF-8
     networks:
       - app
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - '8080'
     environment:
@@ -36,14 +37,11 @@ services:
       - MOODLE_DATABASE_NAME=db
       - MOODLE_DATABASE_USER=db
       - MOODLE_DATABASE_PASSWORD=db
+      
+      - MOODLE_SITE_NAME=ITK learning
 
-      - MOODLE_SITE_NAME="ITK learning"
-
-      # - MOODLE_SMTP_HOST=smtp.gmail.com
-      # - MOODLE_SMTP_PORT=587
-      # - MOODLE_SMTP_USER=your_email@gmail.com
-      # - MOODLE_SMTP_PASSWORD=your_password
-      # - MOODLE_SMTP_PROTOCOL=tls
+      - MOODLE_SMTP_HOST=mail
+      - MOODLE_SMTP_PORT=1025
   
       - "MOODLE_HOST=${COMPOSE_DOMAIN}"
       - MOODLE_REVERSEPROXY=false
