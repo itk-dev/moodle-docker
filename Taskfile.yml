@@ -34,12 +34,20 @@ tasks:
       - task compose-exec -- phpfpm composer {{ .CLI_ARGS }}
     silent: true
 
-  start:
-    desc: "Start docker compose stuff and install composer stuff"
+  build:
+    desc: "Start docker compose stuff and use itk-moodle customization"
     cmds:
       - task compose -- pull
       - task compose -- up --detach --remove-orphans --wait
       - git clone git@github.com:itk-dev/itk-moodle.git custom
+    silent: true
+
+  start:
+    desc: "Start docker compose stuff and use itk-moodle customization"
+    cmds:
+      - task compose -- pull
+      - task compose -- up --detach --remove-orphans --wait
+      - git -C custom pull
     silent: true
 
   site-url:
