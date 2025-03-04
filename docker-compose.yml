@@ -49,6 +49,7 @@ services:
     volumes:
       - '.docker/data/moodle:/bitnami/moodle'
       - '.docker/data/moodledata:/bitnami/moodledata'
+      - './custom/local:/bitnami/moodle/local'
     depends_on:
       - mariadb
 
