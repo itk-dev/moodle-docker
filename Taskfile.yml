@@ -7,6 +7,8 @@ vars:
   # https://taskfile.dev/reference/templating/
   BASE_URL: '{{.TASK_BASE_URL | default .COMPOSE_SERVER_DOMAIN | default .COMPOSE_DOMAIN | default ""}}'
 
+  MOODLE_SCRIPTS_DIR: '/bitnami/moodle/admin/cli'
+
 tasks:
   compose:
     desc: "Run `docker compose` command. Example: task compose -- up --detach"
@@ -20,6 +22,11 @@ tasks:
       # https://unix.stackexchange.com/questions/762992/bash-check-if-the-standard-input-contains-anything)
       - if [[ ! -t 0 ]]; then task compose -- exec --no-TTY {{ .CLI_ARGS }}; else task compose -- exec {{ .CLI_ARGS }}; fi
     silent: true
+
+  exec-moodle-php:
+    desc: "Run a php command within the moodle container"
+    cmds:
+      - '{{ .DOCKER_COMPOSE }} exec moodle php {{ .CLI_ARGS }}'
 
   composer:
     desc: "Run composer command. Example: task composer -- install"
@@ -44,3 +51,24 @@ tasks:
         # Compute base URL if not set.
         sh: if [ ! -z "{{.BASE_URL}}" ]; then echo "https://{{.BASE_URL}}"; else echo "http://$(task compose -- port nginx 8080)"; fi
     silent: true
+
+  moodle-script-list:
+    desc: "Show available moodle scripts"
+    cmds:
+      - task compose-exec -- moodle ls -l {{.MOODLE_SCRIPTS_DIR}}
+
+  moodle-script-show:
+    desc: "Output a script using cat"
+    cmds:
+      - task compose-exec -- moodle cat {{.MOODLE_SCRIPTS_DIR}}/{{ .CLI_ARGS }}
+    preconditions:
+      - sh: "[ {{.CLI_ARGS}} ]"
+        msg: "Script name missing"
+
+  moodle-script-run:
+    desc: "Run a moodle script within the moodle container"
+    cmds:
+      - task exec-moodle-php -- {{.MOODLE_SCRIPTS_DIR}}/{{ .CLI_ARGS }}
+    preconditions:
+      - sh: "[ {{.CLI_ARGS}} ]"
+        msg: "Script name missing"
