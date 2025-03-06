@@ -29,6 +29,7 @@ tasks:
     cmds:
       - sh -c "wget https://github.com/moodle/moodle/archive/refs/tags/{{.MOODLE_VERSION}}.tar.gz"
       - sh -c "mkdir moodle"
+      - sh -c "touch ./config/config.local.php"
       - sh -c "tar -xzf ./{{.MOODLE_VERSION}}.tar.gz --strip-components 1 -C moodle"
       - sh -c "rm {{.MOODLE_VERSION}}.tar.gz"
 
@@ -36,7 +37,6 @@ tasks:
     desc: "Install moodle"
     cmds:
       - sh -c "mkdir moodledata"
-      - sh -c "touch ./config/config.local.php"
       - task compose-exec -- phpfpm php /app/moodle/admin/cli/install_database.php --lang=da --agree-license --adminpass=1234
 
   start:
