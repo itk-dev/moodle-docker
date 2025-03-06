@@ -7,7 +7,7 @@ vars:
   # https://taskfile.dev/reference/templating/
   BASE_URL: '{{.TASK_BASE_URL | default .COMPOSE_SERVER_DOMAIN | default .COMPOSE_DOMAIN | default ""}}'
 
-  MOODLE_SCRIPTS_DIR: '/bitnami/moodle/admin/cli'
+  MOODLE_SCRIPTS_DIR: '/app/moodle/admin/cli'
 
 tasks:
   compose:
@@ -35,11 +35,12 @@ tasks:
   install:
     desc: "Install moodle"
     cmds:
+      - sh -c "mkdir moodledata"
       - sh -c "cp templates/config.php moodle/"
       - task compose-exec -- phpfpm php /app/moodle/admin/cli/install_database.php --lang=da --agree-license --adminpass=1234
 
   start:
-    desc: "Start docker compose stuff and use itk-moodle customization"
+    desc: "Start docker compose stuff"
     cmds:
       - task compose -- pull
       - task compose -- up --detach --remove-orphans --wait
@@ -55,23 +56,23 @@ tasks:
         sh: if [ ! -z "{{.BASE_URL}}" ]; then echo "https://{{.BASE_URL}}"; else echo "http://$(task compose -- port nginx 8080)"; fi
     silent: true
 
-  moodle-script-list:
+  moodle-script:list:
     desc: "Show available moodle scripts"
     cmds:
-      - task compose-exec -- moodle ls -l {{.MOODLE_SCRIPTS_DIR}}
+      - task compose-exec -- phpfpm ls -l {{.MOODLE_SCRIPTS_DIR}}
 
-  moodle-script-show:
+  moodle-script:show:
     desc: "Output a script using cat"
     cmds:
-      - task compose-exec -- moodle cat {{.MOODLE_SCRIPTS_DIR}}/{{ .CLI_ARGS }}
+      - task compose-exec -- phpfpm cat {{.MOODLE_SCRIPTS_DIR}}/{{ .CLI_ARGS }}
     preconditions:
       - sh: "[ {{.CLI_ARGS}} ]"
         msg: "Script name missing"
 
-  moodle-script-run:
+  moodle-script:run:
     desc: "Run a moodle script within the moodle container"
     cmds:
-      - task exec-moodle-php -- {{.MOODLE_SCRIPTS_DIR}}/{{ .CLI_ARGS }}
+      - task compose-exec -- phpfpm php {{.MOODLE_SCRIPTS_DIR}}/{{ .CLI_ARGS }}
     preconditions:
       - sh: "[ {{.CLI_ARGS}} ]"
         msg: "Script name missing"
