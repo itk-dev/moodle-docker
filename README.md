@@ -20,9 +20,10 @@
     task install
     ```
 
-## Updating moodle
+## Upgrading moodle
 
-@todo
+https://docs.moodle.org/405/en/Upgrading
+
 
 ## Managing moodle
 
@@ -32,7 +33,7 @@ Several scripts are available to maintain the moodle installation.
 
 ### Moodle customization
 
-@todo
+Moodle customizations are defined in /local folder and mapped into moodle through docker volumes.
 
 ### Using moodle php scripts
 

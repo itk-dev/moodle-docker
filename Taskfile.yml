@@ -36,7 +36,7 @@ tasks:
     desc: "Install moodle"
     cmds:
       - sh -c "mkdir moodledata"
-      - sh -c "cp templates/config.php moodle/"
+      - sh -c "touch ./config/config.local.php"
       - task compose-exec -- phpfpm php /app/moodle/admin/cli/install_database.php --lang=da --agree-license --adminpass=1234
 
   start:
