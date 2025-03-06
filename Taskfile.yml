@@ -23,24 +23,19 @@ tasks:
       - if [[ ! -t 0 ]]; then task compose -- exec --no-TTY {{ .CLI_ARGS }}; else task compose -- exec {{ .CLI_ARGS }}; fi
     silent: true
 
-  exec-moodle-php:
-    desc: "Run a php command within the moodle container"
+  dist:build:
+    summary: Install Moodle distribution
+    desc: "Install the moodle version defined in .env"
     cmds:
-      - '{{ .DOCKER_COMPOSE }} exec moodle php {{ .CLI_ARGS }}'
+      - sh -c "wget https://github.com/moodle/moodle/archive/refs/tags/{{.MOODLE_VERSION}}.tar.gz"
+      - sh -c "mkdir moodle"
+      - sh -c "tar -xzf ./{{.MOODLE_VERSION}}.tar.gz --strip-components 1 -C moodle"
+      - sh -c "rm {{.MOODLE_VERSION}}.tar.gz"
 
-  composer:
-    desc: "Run composer command. Example: task composer -- install"
+  install:
+    desc: "Install moodle"
     cmds:
-      - task compose-exec -- phpfpm composer {{ .CLI_ARGS }}
-    silent: true
-
-  build:
-    desc: "Start docker compose stuff and use itk-moodle customization"
-    cmds:
-      - git clone git@github.com:itk-dev/itk-moodle.git custom
-      - task compose -- pull
-      - task compose -- up --detach --remove-orphans --wait
-    silent: true
+      - task compose-exec -- phpfpm php /app/moodle/admin/cli/install_database.php --lang=da --agree-license --adminpass=1234
 
   start:
     desc: "Start docker compose stuff and use itk-moodle customization"
