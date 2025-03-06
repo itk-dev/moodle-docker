@@ -41,9 +41,6 @@ services:
       - PHP_SENDMAIL_PATH=/usr/bin/msmtp --host=mail --port=1025 --read-recipients --read-envelope-from
       - DOCKER_HOST_DOMAIN=${COMPOSE_DOMAIN}
       - PHP_IDE_CONFIG=serverName=localhost
-      - SERVER_PORT=8080
-      - HTTP_HOST=$(DOCKER-COMPOSE-NAME)
-      - PHP_MAX_INPUT_VARS=5000
     depends_on:
       mariadb:
         condition: service_healthy
@@ -64,7 +61,7 @@ services:
       - .:/app
     environment:
       NGINX_FPM_SERVICE: ${COMPOSE_PROJECT_NAME}-phpfpm-1:9000
-      NGINX_WEB_ROOT: /app/moodle
+      NGINX_WEB_ROOT: /app/public
       NGINX_PORT: 8080
       NGINX_MAX_BODY_SIZE: 5M
     labels:
