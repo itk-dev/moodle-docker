@@ -37,3 +37,7 @@ require_once(__DIR__ . '/lib/setup.php');
 
 // There is no php closing tag in this file,
 // it is intentional because it prevents trailing whitespace problems!
+
+if (file_exists('/app/config/config.local.php')) {
+  include '/app/config/config.local.php';
+}
