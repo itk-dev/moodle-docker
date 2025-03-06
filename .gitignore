@@ -4,3 +4,6 @@
 # Moodle folder
 moodle/
 moodledata/
+
+# Local config
+config/config.local.php
