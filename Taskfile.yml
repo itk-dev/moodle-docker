@@ -37,7 +37,12 @@ tasks:
     desc: "Install moodle"
     cmds:
       - sh -c "mkdir moodledata"
+<<<<<<< Updated upstream
       - task compose-exec -- phpfpm php /app/moodle/admin/cli/install_database.php --lang=da --agree-license --adminpass=1234
+=======
+      # Use install_database.php instead of install.php because we have the config defined in moodle-config.php
+      - task compose-exec -- phpfpm php {{.MOODLE_SCRIPTS_DIR}}/install_database.php --lang=da --agree-license --adminpass=1234
+>>>>>>> Stashed changes
 
   start:
     desc: "Start docker compose stuff"
