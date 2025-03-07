@@ -42,6 +42,14 @@ Customization of Moodle should be done through changes in Moodle/local folder.
 
 Several scripts are available to maintain the Moodle installation.
 
+### Contributed extensions
+
+@todo How does it work.
+
+I have prepared a contrib folder outside the moodle folder to hold potential contrib plugins. 
+The plugins should not be committed to git so we ignore all files in folder. A script of some kind should ensure that the plugins are downloaded.
+Each plugin needs to be added as volume in docker if we follow this approach. 
+
 ### Moodle customization
 
 Moodle customizations are defined in the `local` folder and mapped into moodle through docker volumes.
