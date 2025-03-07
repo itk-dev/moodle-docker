@@ -41,7 +41,9 @@ Moodle has several scripts to manage the application.
 
 #### Show available scripts
 
-```task moodle-script:list```
+``` shell
+task moodle-script:list
+```
 
 #### Show contents of purge cache script using cat
 
