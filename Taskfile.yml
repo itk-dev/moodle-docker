@@ -27,7 +27,7 @@ tasks:
     summary: Install Moodle distribution
     desc: "Install the moodle version defined in .env"
     cmds:
-      - sh -c "wget https://github.com/moodle/moodle/archive/refs/tags/{{.MOODLE_VERSION}}.tar.gz"
+      - wget https://github.com/moodle/moodle/archive/refs/tags/{{.MOODLE_VERSION}}.tar.gz
       - sh -c "mkdir moodle"
       - sh -c "touch ./config/config.local.php"
       - sh -c "tar -xzf ./{{.MOODLE_VERSION}}.tar.gz --strip-components 1 -C moodle"
