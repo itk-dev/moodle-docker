@@ -33,7 +33,7 @@ Several scripts are available to maintain the moodle installation.
 
 ### Moodle customization
 
-Moodle customizations are defined in /local folder and mapped into moodle through docker volumes.
+Moodle customizations are defined in the `local` folder and mapped into moodle through docker volumes.
 
 ### Using moodle php scripts
 
