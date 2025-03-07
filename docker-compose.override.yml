@@ -5,7 +5,7 @@ services:
       - PHP_MAX_INPUT_VARS=5000
     volumes:
       - ./config/moodle-config.php:/app/moodle/config.php
-      - ./local:/app/moodle/local
+      - ./custom:/app/moodle/local
   nginx:
     environment:
       NGINX_WEB_ROOT: /app/moodle

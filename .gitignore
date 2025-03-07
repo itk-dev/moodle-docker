@@ -7,6 +7,7 @@ moodledata/
 
 # Local config
 config/config.local.php
+custom/local-settings.php
 
 # Mac
 .DS_Store

@@ -27,7 +27,6 @@ if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
   $CFG->wwwroot   = 'http://' . 'moodle.local.itkdev.dk';
 }
 
-
 $CFG->dataroot  = '/app/moodledata';
 $CFG->admin     = 'admin';
 
