@@ -37,7 +37,8 @@ tasks:
     desc: "Install moodle"
     cmds:
       - sh -c "mkdir moodledata"
-      - task compose-exec -- phpfpm php /app/moodle/admin/cli/install_database.php --lang=da --agree-license --adminpass=1234
+      # Use install_database.php instead of install.php because we have the config defined in moodle-config.php
+      - task moodle-script:run -- install_database.php --lang=da --agree-license --adminpass=1234
 
   start:
     desc: "Start docker compose stuff"
@@ -60,14 +61,6 @@ tasks:
     desc: "Show available moodle scripts"
     cmds:
       - task compose-exec -- phpfpm ls -l {{.MOODLE_SCRIPTS_DIR}}
-
-  moodle-script:show:
-    desc: "Output a script using cat"
-    cmds:
-      - task compose-exec -- phpfpm cat {{.MOODLE_SCRIPTS_DIR}}/{{ .CLI_ARGS }}
-    preconditions:
-      - sh: "[ {{.CLI_ARGS}} ]"
-        msg: "Script name missing"
 
   moodle-script:run:
     desc: "Run a moodle script within the moodle container"

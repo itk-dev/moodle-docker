@@ -2,53 +2,62 @@
 
 ## Installation
 
-1. Fetch the moodle distribution defined in .env
+### 1. Fetch the Moodle distribution defined in .env
 
-    ```shell
-    task dist:build
-    ```
+Build Moodle from downloaded package as described here:
+https://docs.moodle.org/405/en/Installation_quick_guide#Getting_Moodle
 
-2. Startup docker
+```shell
+task dist:build
+```
 
-    ```shell
-   task start
-   ```
+### 2. Startup docker
 
-3. Install moodle
+```shell
+task start
+```
 
-    ```shell
-    task install
-    ```
+### 3. Install Moodle
 
-## Upgrading moodle
+Following cli installation described here:
+https://docs.moodle.org/405/en/Administration_via_command_line#Installation
+
+```shell
+task install
+```
+
+## Upgrading Moodle
+
+@todo Find out what works for us.
 
 https://docs.moodle.org/405/en/Upgrading
+https://docs.moodle.org/405/en/Administration_via_command_line#Upgrading
 
 
-## Managing moodle
+## Managing Moodle
 
-Customization of moodle should be done through changes in moodle/local folder.
+@todo Find out what works for us.
 
-Several scripts are available to maintain the moodle installation.
+Customization of Moodle should be done through changes in Moodle/local folder.
+
+Several scripts are available to maintain the Moodle installation.
 
 ### Moodle customization
 
 Moodle customizations are defined in the `local` folder and mapped into moodle through docker volumes.
 
-### Using moodle php scripts
+### Using Moodle php scripts
 
-Moodle has several scripts to manage the application.
+Moodle has several scripts to manage the application. Described here: https://docs.moodle.org/405/en/Administration_via_command_line#Running_CLI_scripts
 
 #### Show available scripts
 
-``` shell
+```shell
 task moodle-script:list
 ```
 
-#### Show contents of purge cache script using cat
-
-```task moodle-script:show -- purge_caches.php```
-
 #### Run purge cache script
 
-```task moodle-script:run -- purge_caches.php```
+```shell
+task Moodle-script:run -- purge_caches.php
+```
