@@ -1,0 +1,12 @@
+# Php Storm
+.idea/
+
+# Moodle folder
+moodle/
+moodledata/
+
+# Local config
+config/config.local.php
+
+# Mac
+.DS_Store

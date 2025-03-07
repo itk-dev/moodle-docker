@@ -1,3 +1,4 @@
+# itk-version: 3.2.3
 networks:
   frontend:
     external: true
@@ -6,37 +7,18 @@ networks:
     internal: false
 
 services:
-  moodle:
-    # image: bitnami/moodle:4.5
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-      - EXTRA_LOCALES=da_DK.UTF-8 UTF-8
+  phpfpm:
+    image: itkdev/php8.3-fpm:alpine
     restart: unless-stopped
     networks:
       - app
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    ports:
-      - '8080'
     environment:
-      - "MOODLE_DATABASE_HOST=${MOODLE_DATABASE_HOST:-host.docker.internal}"
-      - "MOODLE_DATABASE_NAME=${MOODLE_DATABASE_NAME}"
-      - "MOODLE_DATABASE_USER=${MOODLE_DATABASE_USER}"
-      - "MOODLE_DATABASE_PASSWORD=${MOODLE_DATABASE_PASSWORD}"
-
-      - "MOODLE_SITE_NAME=${MOODLE_SITE_NAME:-ITK learning}"
-
-      - "MOODLE_SMTP_HOST=${MOODLE_SMTP_HOST:-host.docker.internal}"
-      - "MOODLE_SMTP_PORT=${MOODLE_SMTP_PORT:-25}"
-  
-      - "MOODLE_HOST=${COMPOSE_SERVER_DOMAIN}"
-      - MOODLE_REVERSEPROXY=false
-      - MOODLE_SSLPROXY=true
+      - PHP_MAX_EXECUTION_TIME=30
+      - PHP_MEMORY_LIMIT=128M
     volumes:
-      - '.docker/data/moodle:/bitnami/moodle'
-      - '.docker/data/moodledata:/bitnami/moodledata'
+      - .:/app
 
   nginx:
     image: nginxinc/nginx-unprivileged:alpine
@@ -45,13 +27,14 @@ services:
       - app
       - frontend
     depends_on:
-      - moodle
+      - phpfpm
     volumes:
       - ./.docker/templates:/etc/nginx/templates:ro
       - ./.docker/nginx.conf:/etc/nginx/nginx.conf:ro
       - .:/app
     environment:
-      NGINX_WEB_ROOT: /app
+      NGINX_FPM_SERVICE: ${COMPOSE_PROJECT_NAME}-phpfpm-1:9000
+      NGINX_WEB_ROOT: /app/public
       NGINX_PORT: 8080
       NGINX_MAX_BODY_SIZE: 5M
     labels:

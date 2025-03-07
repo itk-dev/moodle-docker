@@ -1,3 +1,4 @@
+# itk-version: 3.2.3
 networks:
   frontend:
     external: true
@@ -12,6 +13,12 @@ services:
       - app
     ports:
       - '3306'
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_USER=db
@@ -19,38 +26,26 @@ services:
       - MYSQL_DATABASE=db
       #- ENCRYPT=1 # Uncomment to enable database encryption.
 
-  moodle:
-    # image: bitnami/moodle:4.5
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-      - EXTRA_LOCALES=da_DK.UTF-8 UTF-8
+  phpfpm:
+    image: itkdev/php8.3-fpm:latest
+    user: ${COMPOSE_USER:-deploy}
     networks:
       - app
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    ports:
-      - '8080'
     environment:
-      - MOODLE_DATABASE_HOST=mariadb  
-      - MOODLE_DATABASE_NAME=db
-      - MOODLE_DATABASE_USER=db
-      - MOODLE_DATABASE_PASSWORD=db
-      
-      - MOODLE_SITE_NAME=ITK learning
-
-      - MOODLE_SMTP_HOST=mail
-      - MOODLE_SMTP_PORT=1025
-  
-      - "MOODLE_HOST=${COMPOSE_DOMAIN}"
-      - MOODLE_REVERSEPROXY=false
-      - MOODLE_SSLPROXY=false
-    volumes:
-      - '.docker/data/moodle:/bitnami/moodle'
-      - '.docker/data/moodledata:/bitnami/moodledata'
+      - PHP_XDEBUG_MODE=${PHP_XDEBUG_MODE:-off}
+      - PHP_MAX_EXECUTION_TIME=30
+      - PHP_MEMORY_LIMIT=256M
+      # Depending on the setup, you may have to remove --read-envelope-from from msmtp (cf. https://marlam.de/msmtp/msmtp.html) or use SMTP to send mail
+      - PHP_SENDMAIL_PATH=/usr/bin/msmtp --host=mail --port=1025 --read-recipients --read-envelope-from
+      - DOCKER_HOST_DOMAIN=${COMPOSE_DOMAIN}
+      - PHP_IDE_CONFIG=serverName=localhost
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
+    volumes:
+      - .:/app
 
   nginx:
     image: nginxinc/nginx-unprivileged:alpine
@@ -58,14 +53,15 @@ services:
       - app
       - frontend
     depends_on:
-      - moodle
+      - phpfpm
     ports:
       - '8080'
     volumes:
       - ./.docker/templates:/etc/nginx/templates:ro
       - .:/app
     environment:
-      NGINX_WEB_ROOT: /app
+      NGINX_FPM_SERVICE: ${COMPOSE_PROJECT_NAME}-phpfpm-1:9000
+      NGINX_WEB_ROOT: /app/public
       NGINX_PORT: 8080
       NGINX_MAX_BODY_SIZE: 5M
     labels:
